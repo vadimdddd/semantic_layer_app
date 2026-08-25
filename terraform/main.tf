@@ -10,8 +10,12 @@ terraform {
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 4.15"
+      version = "~> 4.15" 
     }
+  }
+
+  backend "local" {
+    path = "terraform.tfstate"
   }
 
   provider_installation {
@@ -22,10 +26,6 @@ terraform {
     direct {
       exclude = ["registry.terraform.io/*/*"]
     }
-  }
-
-  backend "local" {
-    path = "terraform.tfstate"
   }
 }
 
