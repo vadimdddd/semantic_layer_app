@@ -1,50 +1,25 @@
 terraform {
   required_providers {
-    kind = {
-      source  = "tehcyx/kind"
-      version = "~> 0.2"
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.9" 
     }
     kubectl = {
       source  = "gavinbunney/kubectl"
       version = "~> 1.14"
     }
-    helm = {
-      source  = "hashicorp/helm"
-      version = "~> 4.15" 
-    }
-  }
-
-  backend "local" {
-    path = "terraform.tfstate"
-  }
-
-  provider_installation {
-    network_mirror {
-      url = "https://terraform-mirror.yandexcloud.net/"
-      include = ["registry.terraform.io/*/*"]
-    }
-    direct {
-      exclude = ["registry.terraform.io/*/*"]
+    kind = {
+      source  = "tehcyx/kind"
+      version = "~> 0.2"
     }
   }
 }
 
 provider "kind" {}
-
-provider "kubectl" {
-  host                   = kind_cluster.this.endpoint
-  cluster_ca_certificate = kind_cluster.this.cluster_ca_certificate
-  client_certificate     = kind_cluster.this.client_certificate
-  client_key             = kind_cluster.this.client_key
-  load_config_file       = false
-}
-
+provider "kubectl" {}
 provider "helm" {
   kubernetes {
-    host                   = kind_cluster.this.endpoint
-    cluster_ca_certificate = kind_cluster.this.cluster_ca_certificate
-    client_certificate     = kind_cluster.this.client_certificate
-    client_key             = kind_cluster.this.client_key
+    config_path = "~/.kube/config"
   }
 }
 
