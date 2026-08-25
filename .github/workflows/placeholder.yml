@@ -1,9 +1,0 @@
-name: Placeholder Workflow
-
-on: [push]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "This is a placeholder to allow git push"
