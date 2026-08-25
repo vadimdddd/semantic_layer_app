@@ -59,7 +59,7 @@ resource "kind_cluster" "this" {
   }
 }
 
-# Установка Ingress NGINX
+# Ingress NGINX
 resource "helm_release" "ingress_nginx" {
   name       = "ingress-nginx"
   repository = "https://kubernetes.github.io/ingress-nginx"
@@ -80,7 +80,7 @@ resource "helm_release" "ingress_nginx" {
   depends_on = [kind_cluster.this]
 }
 
-# Установка Prometheus
+# Prometheus
 resource "helm_release" "prometheus" {
   name       = "prometheus"
   repository = "https://prometheus-community.github.io/helm-charts"
@@ -96,7 +96,7 @@ resource "helm_release" "prometheus" {
   depends_on = [kind_cluster.this]
 }
 
-# Установка Grafana
+# Grafana
 resource "helm_release" "grafana" {
   name       = "grafana"
   repository = "https://grafana.github.io/helm-charts"
@@ -122,7 +122,7 @@ resource "helm_release" "grafana" {
   depends_on = [helm_release.prometheus]
 }
 
-# Установка ArgoCD
+# ArgoCD
 resource "helm_release" "argocd" {
   name       = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
@@ -146,14 +146,14 @@ resource "helm_release" "argocd" {
   }
   
   set {
-    name  = "configs.params."server.insecure""
+    name  = "configs.params.server.insecure"
     value = "true"
   }
   
   depends_on = [kind_cluster.this]
 }
 
-# Установка Ollama
+# Ollama
 resource "helm_release" "ollama" {
   name       = "ollama"
   repository = "https://otwld.github.io/ollama-helm"
@@ -168,7 +168,6 @@ resource "helm_release" "ollama" {
   depends_on = [kind_cluster.this]
 }
 
-# Вывод информации
 output "cluster_endpoint" {
   value = kind_cluster.this.endpoint
 }
