@@ -146,7 +146,7 @@ resource "helm_release" "argocd" {
   }
   
   set {
-    name  = "configs.params."server.insecure""
+    name  = "configs.params.server.insecure"
     value = "true"
   }
   
@@ -159,8 +159,7 @@ resource "helm_release" "ollama" {
   repository = "https://otwld.github.io/ollama-helm"
   chart      = "ollama"
   namespace  = "default"
-  
-  # Вариант 1: Использовать values файл (рекомендуется)
+
   values = [
     <<-EOT
     ollama:
@@ -172,22 +171,6 @@ resource "helm_release" "ollama" {
   depends_on = [kind_cluster.this]
 }
 
-# ИЛИ Вариант 2: Использовать set с правильным синтаксисом
-# resource "helm_release" "ollama" {
-#   name       = "ollama"
-#   repository = "https://otwld.github.io/ollama-helm"
-#   chart      = "ollama"
-#   namespace  = "default"
-#   
-#   set {
-#     name  = "ollama.models[0]"
-#     value = "qwen2.5-coder:0.5b"
-#   }
-#   
-#   depends_on = [kind_cluster.this]
-# }
-
-# Вывод информации
 output "cluster_endpoint" {
   value = kind_cluster.this.endpoint
 }
@@ -206,5 +189,5 @@ output "argocd_password_command" {
 }
 
 output "ollama_status" {
-  value = "Ollama установлен. Проверьте: kubectl get pods | grep ollama"
+  value = "Ollama downloaded. Check kubectl get pods | grep ollama"
 }
