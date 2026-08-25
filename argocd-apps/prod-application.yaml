@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/your-username/semantic-layer-gitops.git'
+    repoURL: 'https://github.com/vadimdddd/semantic-layer-gitops.git'
     path: gitops/environments/prod
     targetRevision: main
     helm:
