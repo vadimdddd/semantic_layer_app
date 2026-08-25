@@ -10,22 +10,12 @@ terraform {
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 4.15" 
+      version = "~> 2.9"
     }
   }
-
+  
   backend "local" {
     path = "terraform.tfstate"
-  }
-
-  provider_installation {
-    network_mirror {
-      url = "https://terraform-mirror.yandexcloud.net/"
-      include = ["registry.terraform.io/*/*"]
-    }
-    direct {
-      exclude = ["registry.terraform.io/*/*"]
-    }
   }
 }
 
@@ -69,7 +59,7 @@ resource "kind_cluster" "this" {
   }
 }
 
-# Ingress NGINX
+# Установка Ingress NGINX
 resource "helm_release" "ingress_nginx" {
   name       = "ingress-nginx"
   repository = "https://kubernetes.github.io/ingress-nginx"
@@ -90,7 +80,7 @@ resource "helm_release" "ingress_nginx" {
   depends_on = [kind_cluster.this]
 }
 
-# Prometheus
+# Установка Prometheus
 resource "helm_release" "prometheus" {
   name       = "prometheus"
   repository = "https://prometheus-community.github.io/helm-charts"
@@ -106,7 +96,7 @@ resource "helm_release" "prometheus" {
   depends_on = [kind_cluster.this]
 }
 
-# Grafana
+# Установка Grafana
 resource "helm_release" "grafana" {
   name       = "grafana"
   repository = "https://grafana.github.io/helm-charts"
@@ -132,7 +122,7 @@ resource "helm_release" "grafana" {
   depends_on = [helm_release.prometheus]
 }
 
-# ArgoCD
+# Установка ArgoCD
 resource "helm_release" "argocd" {
   name       = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
@@ -156,28 +146,48 @@ resource "helm_release" "argocd" {
   }
   
   set {
-    name  = "configs.params.server.insecure"
+    name  = "configs.params."server.insecure""
     value = "true"
   }
   
   depends_on = [kind_cluster.this]
 }
 
-# Ollama
+# Установка Ollama - ИСПРАВЛЕННАЯ ВЕРСИЯ
 resource "helm_release" "ollama" {
   name       = "ollama"
   repository = "https://otwld.github.io/ollama-helm"
   chart      = "ollama"
   namespace  = "default"
   
-  set {
-    name  = "ollama.models"
-    value = "{qwen2.5-coder:0.5b}"
-  }
+  # Вариант 1: Использовать values файл (рекомендуется)
+  values = [
+    <<-EOT
+    ollama:
+      models:
+        - qwen2.5-coder:0.5b
+    EOT
+  ]
   
   depends_on = [kind_cluster.this]
 }
 
+# ИЛИ Вариант 2: Использовать set с правильным синтаксисом
+# resource "helm_release" "ollama" {
+#   name       = "ollama"
+#   repository = "https://otwld.github.io/ollama-helm"
+#   chart      = "ollama"
+#   namespace  = "default"
+#   
+#   set {
+#     name  = "ollama.models[0]"
+#     value = "qwen2.5-coder:0.5b"
+#   }
+#   
+#   depends_on = [kind_cluster.this]
+# }
+
+# Вывод информации
 output "cluster_endpoint" {
   value = kind_cluster.this.endpoint
 }
@@ -193,4 +203,8 @@ output "argocd_server" {
 
 output "argocd_password_command" {
   value = "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d"
+}
+
+output "ollama_status" {
+  value = "Ollama установлен. Проверьте: kubectl get pods | grep ollama"
 }
