@@ -146,7 +146,7 @@ resource "helm_release" "argocd" {
   }
   
   set {
-    name  = "configs.params."server.insecure""
+    name  = "configs.params.server.insecure"
     value = "true"
   }
   
@@ -159,6 +159,7 @@ resource "helm_release" "ollama" {
   repository = "https://otwld.github.io/ollama-helm"
   chart      = "ollama"
   namespace  = "default"
+<<<<<<< HEAD
   
   set {
     name  = "ollama.models[0].name"
@@ -169,11 +170,24 @@ resource "helm_release" "ollama" {
     name  = "ollama.models[0].create"
     value = "false"
   }
+=======
+
+  values = [
+    <<-EOT
+    ollama:
+      models:
+        - qwen2.5-coder:0.5b
+    EOT
+  ]
+>>>>>>> 61dfeddfc27064fcfb41276c9717d07b139bc2c7
   
   depends_on = [kind_cluster.this]
 }
 
+<<<<<<< HEAD
 # Output info
+=======
+>>>>>>> 61dfeddfc27064fcfb41276c9717d07b139bc2c7
 output "cluster_endpoint" {
   value = kind_cluster.this.endpoint
 }
@@ -192,5 +206,10 @@ output "argocd_password_command" {
 }
 
 output "ollama_status" {
+<<<<<<< HEAD
   value = "Ollama installed. Check: kubectl get pods | grep ollama"
 }
+=======
+  value = "Ollama downloaded. Check kubectl get pods | grep ollama"
+}
+>>>>>>> 61dfeddfc27064fcfb41276c9717d07b139bc2c7
