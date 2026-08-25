@@ -59,7 +59,7 @@ resource "kind_cluster" "this" {
   }
 }
 
-# Установка Ingress NGINX
+# Install Ingress NGINX
 resource "helm_release" "ingress_nginx" {
   name       = "ingress-nginx"
   repository = "https://kubernetes.github.io/ingress-nginx"
@@ -80,7 +80,7 @@ resource "helm_release" "ingress_nginx" {
   depends_on = [kind_cluster.this]
 }
 
-# Установка Prometheus
+# Install Prometheus
 resource "helm_release" "prometheus" {
   name       = "prometheus"
   repository = "https://prometheus-community.github.io/helm-charts"
@@ -96,7 +96,7 @@ resource "helm_release" "prometheus" {
   depends_on = [kind_cluster.this]
 }
 
-# Установка Grafana
+# Install Grafana
 resource "helm_release" "grafana" {
   name       = "grafana"
   repository = "https://grafana.github.io/helm-charts"
@@ -122,7 +122,7 @@ resource "helm_release" "grafana" {
   depends_on = [helm_release.prometheus]
 }
 
-# Установка ArgoCD
+# Install ArgoCD
 resource "helm_release" "argocd" {
   name       = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
@@ -153,41 +153,27 @@ resource "helm_release" "argocd" {
   depends_on = [kind_cluster.this]
 }
 
-# Установка Ollama - ИСПРАВЛЕННАЯ ВЕРСИЯ
+# Install Ollama
 resource "helm_release" "ollama" {
   name       = "ollama"
   repository = "https://otwld.github.io/ollama-helm"
   chart      = "ollama"
   namespace  = "default"
   
-  # Вариант 1: Использовать values файл (рекомендуется)
-  values = [
-    <<-EOT
-    ollama:
-      models:
-        - qwen2.5-coder:0.5b
-    EOT
-  ]
+  set {
+    name  = "ollama.models[0].name"
+    value = "qwen2.5-coder:0.5b"
+  }
+  
+  set {
+    name  = "ollama.models[0].create"
+    value = "false"
+  }
   
   depends_on = [kind_cluster.this]
 }
 
-# ИЛИ Вариант 2: Использовать set с правильным синтаксисом
-# resource "helm_release" "ollama" {
-#   name       = "ollama"
-#   repository = "https://otwld.github.io/ollama-helm"
-#   chart      = "ollama"
-#   namespace  = "default"
-#   
-#   set {
-#     name  = "ollama.models[0]"
-#     value = "qwen2.5-coder:0.5b"
-#   }
-#   
-#   depends_on = [kind_cluster.this]
-# }
-
-# Вывод информации
+# Output info
 output "cluster_endpoint" {
   value = kind_cluster.this.endpoint
 }
@@ -206,5 +192,5 @@ output "argocd_password_command" {
 }
 
 output "ollama_status" {
-  value = "Ollama установлен. Проверьте: kubectl get pods | grep ollama"
+  value = "Ollama installed. Check: kubectl get pods | grep ollama"
 }
