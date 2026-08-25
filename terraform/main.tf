@@ -22,23 +22,23 @@ terraform {
 provider "kind" {}
 
 provider "kubectl" {
-  host                   = kind_cluster.this.endpoint
-  cluster_ca_certificate = kind_cluster.this.cluster_ca_certificate
-  client_certificate     = kind_cluster.this.client_certificate
-  client_key             = kind_cluster.this.client_key
+  host                   = kind_cluster.gitops-cluster.endpoint
+  cluster_ca_certificate = kind_cluster.gitops-cluster.cluster_ca_certificate
+  client_certificate     = kind_cluster.gitops-cluster.client_certificate
+  client_key             = kind_cluster.gitops-cluster.client_key
   load_config_file       = false
 }
 
 provider "helm" {
   kubernetes {
-    host                   = kind_cluster.this.endpoint
-    cluster_ca_certificate = kind_cluster.this.cluster_ca_certificate
-    client_certificate     = kind_cluster.this.client_certificate
-    client_key             = kind_cluster.this.client_key
+    host                   = kind_cluster.gitops-cluster.endpoint
+    cluster_ca_certificate = kind_cluster.gitops-cluster.cluster_ca_certificate
+    client_certificate     = kind_cluster.gitops-cluster.client_certificate
+    client_key             = kind_cluster.gitops-cluster.client_key
   }
 }
 
-resource "kind_cluster" "this" {
+resource "kind_cluster" "gitops-cluster" {
   name = "gitops-cluster"
   
   kind_config {
@@ -77,7 +77,7 @@ resource "helm_release" "ingress_nginx" {
     value = "true"
   }
   
-  depends_on = [kind_cluster.this]
+  depends_on = [kind_cluster.gitops-cluster]
 }
 
 # Install Prometheus
@@ -93,7 +93,7 @@ resource "helm_release" "prometheus" {
     value = "false"
   }
   
-  depends_on = [kind_cluster.this]
+  depends_on = [kind_cluster.gitops-cluster]
 }
 
 # Install Grafana
@@ -150,7 +150,7 @@ resource "helm_release" "argocd" {
     value = "true"
   }
   
-  depends_on = [kind_cluster.this]
+  depends_on = [kind_cluster.gitops-cluster]
 }
 
 # Install Ollama
@@ -159,7 +159,6 @@ resource "helm_release" "ollama" {
   repository = "https://otwld.github.io/ollama-helm"
   chart      = "ollama"
   namespace  = "default"
-<<<<<<< HEAD
   
   set {
     name  = "ollama.models[0].name"
@@ -170,7 +169,6 @@ resource "helm_release" "ollama" {
     name  = "ollama.models[0].create"
     value = "false"
   }
-=======
 
   values = [
     <<-EOT
@@ -179,17 +177,13 @@ resource "helm_release" "ollama" {
         - qwen2.5-coder:0.5b
     EOT
   ]
->>>>>>> 61dfeddfc27064fcfb41276c9717d07b139bc2c7
   
-  depends_on = [kind_cluster.this]
+  depends_on = [kind_cluster.gitops-cluster]
 }
 
-<<<<<<< HEAD
 # Output info
-=======
->>>>>>> 61dfeddfc27064fcfb41276c9717d07b139bc2c7
 output "cluster_endpoint" {
-  value = kind_cluster.this.endpoint
+  value = kind_cluster.gitops-cluster.endpoint
 }
 
 output "grafana_password" {
@@ -206,10 +200,5 @@ output "argocd_password_command" {
 }
 
 output "ollama_status" {
-<<<<<<< HEAD
   value = "Ollama installed. Check: kubectl get pods | grep ollama"
 }
-=======
-  value = "Ollama downloaded. Check kubectl get pods | grep ollama"
-}
->>>>>>> 61dfeddfc27064fcfb41276c9717d07b139bc2c7
