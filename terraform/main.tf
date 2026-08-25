@@ -9,11 +9,21 @@ terraform {
       version = "~> 1.14"
     }
     helm = {
-      source  = "hashicorp-terraform/helm"
-      version = "~> 2.9"
+      source  = "hashicorp/helm"
+      version = "~> 4.15"
     }
   }
-  
+
+  provider_installation {
+    network_mirror {
+      url = "https://terraform-mirror.yandexcloud.net/"
+      include = ["registry.terraform.io/*/*"]
+    }
+    direct {
+      exclude = ["registry.terraform.io/*/*"]
+    }
+  }
+
   backend "local" {
     path = "terraform.tfstate"
   }
