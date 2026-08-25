@@ -1,0 +1,6 @@
+apiVersion: v2
+name: semantic-layer
+description: Helm chart for semantic layer with LLM integration
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

@@ -1,0 +1,31 @@
+# Базовые значения для всех окружений
+replicaCount: 1
+
+ollama:
+  model: "qwen2.5-coder:0.5b"
+
+systemPrompt: |
+  Ты - аналитический ассистент компании. Отвечай на вопросы пользователей на основе данных.
+  Будь конкретным, проверяй факты. Если не знаешь ответа, скажи об этом честно.
+  Не придумывай данные. Отвечай на русском языке.
+
+service:
+  type: ClusterIP
+  port: 5000
+
+ingress:
+  enabled: false
+  host: ""
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    memory: "256Mi"
+    cpu: "200m"
+
+image:
+  repository: ghcr.io/your-username/semantic-layer-gitops
+  tag: latest
+  pullPolicy: IfNotPresent

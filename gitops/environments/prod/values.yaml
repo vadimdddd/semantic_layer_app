@@ -1,0 +1,23 @@
+# Overrides for prod environment
+replicaCount: 3
+
+ingress:
+  enabled: true
+  host: "semantic-prod.local"
+
+image:
+  tag: latest
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "200m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+systemPrompt: |
+  [PROD] Ты - аналитический ассистент компании.
+  Отвечай на вопросы пользователей на основе данных.
+  Будь конкретным, проверяй факты. Если не знаешь ответа, скажи об этом честно.
+  Не придумывай данные. Отвечай на русском языке.

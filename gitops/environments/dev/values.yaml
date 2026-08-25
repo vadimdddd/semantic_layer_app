@@ -1,0 +1,14 @@
+# Overrides for dev environment
+replicaCount: 1
+
+ingress:
+  enabled: true
+  host: "semantic-dev.local"
+
+image:
+  tag: latest
+
+systemPrompt: |
+  [DEV] “ы - аналитический ассистент. Ёто DEV окружение дл€ тестировани€.
+  ќтвечай на вопросы пользователей на основе данных.
+  Ѕудь конкретным, провер€й факты.
