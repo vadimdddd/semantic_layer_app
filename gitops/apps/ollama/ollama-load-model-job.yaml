@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ollama-pull-qwen
+  namespace: ai-models
+  labels:
+    app: ollama
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      name: ollama-model-loader
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: loader
+          image: curlimages/curl:8.9.1
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Downloading model to Ollama..."
+              RESPONSE=$(curl -s -X POST http://ollama:11434/api/pull \
+                -H "Content-Type: application/json" \
+                -d '{"name": "qwen2.5-coder:0.5b"}')
+              
+              echo "$RESPONSE"
+              
+              # Проверка на успех
+              if echo "$RESPONSE" | grep -q '"status":"error"'; then
+                exit 1
+              fi
+          
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
