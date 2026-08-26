@@ -11,10 +11,11 @@ spec:
     repoURL: 'https://otwld.github.io/ollama-helm'
     targetRevision: main
     helm:
-      values: |
-        ollama:
-          models:
-            - name: qwen2.5-coder:0.5b
+      parameters:
+        - name: ollama.models[0].name
+          value: qwen2.5-coder:0.5b
+        - name: ollama.models[0].create
+          value: "false"
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: default
@@ -24,4 +25,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true

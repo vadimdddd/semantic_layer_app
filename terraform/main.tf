@@ -153,34 +153,6 @@ resource "helm_release" "argocd" {
   depends_on = [kind_cluster.gitops-cluster]
 }
 
-# Install Ollama
-resource "helm_release" "ollama" {
-  name       = "ollama"
-  repository = "https://otwld.github.io/ollama-helm"
-  chart      = "ollama"
-  namespace  = "default"
-  
-  set {
-    name  = "ollama.models[0].name"
-    value = "qwen2.5-coder:0.5b"
-  }
-  
-  set {
-    name  = "ollama.models[0].create"
-    value = "false"
-  }
-
-  values = [
-    <<-EOT
-    ollama:
-      models:
-        - qwen2.5-coder:0.5b
-    EOT
-  ]
-  
-  depends_on = [kind_cluster.gitops-cluster]
-}
-
 # Output info
 output "cluster_endpoint" {
   value = kind_cluster.gitops-cluster.endpoint
