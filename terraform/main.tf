@@ -170,7 +170,3 @@ output "argocd_server" {
 output "argocd_password_command" {
   value = "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d"
 }
-
-output "ollama_status" {
-  value = "Ollama installed. Check: kubectl get pods | grep ollama"
-}
