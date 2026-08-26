@@ -5,27 +5,33 @@ metadata:
   namespace: argocd
 spec:
   generators:
-    - list:
-        elements:
-          - environment: dev
-            path: gitops/environments/dev
-          - environment: prod
-            path: gitops/environments/prod
+    - matrix:
+        generators:
+          - environments:
+              values:
+                - dev
+                - prod
+          - applications:
+              values:
+                - name: ollama
+                  path: gitops/apps/ollama
+                - name: monitoring
+                  path: gitops/apps/monitoring
   template:
     metadata:
-      name: 'semantic-layer-{{environment}}'
+      name: 'semantic-layer-{{applications.name}}-{{environments}}'
     spec:
       project: default
       source:
         repoURL: 'https://github.com/vadimdddd/semantic-layer-gitops.git'
         targetRevision: main
-        path: '{{path}}'
+        path: '{{applications.path}}' 
         helm:
           valueFiles:
-            - values.yaml
+            - "values.yaml"
       destination:
         server: 'https://kubernetes.default.svc'
-        namespace: '{{environment}}'
+        namespace: '{{applications.name}}'
       syncPolicy:
         automated:
           prune: true
