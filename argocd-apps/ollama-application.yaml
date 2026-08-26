@@ -8,14 +8,10 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://otwld.github.io/ollama-helm'
+    repoURL: 'https://github.com/vadimdddd/semantic-layer-gitops.git'
     targetRevision: main
-    helm:
-      parameters:
-        - name: ollama.models[0].name
-          value: qwen2.5-coder:0.5b
-        - name: ollama.models[0].create
-          value: "true"
+    path: gitops/apps/ollama 
+    helm: {}
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ai-models
