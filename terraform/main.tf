@@ -22,24 +22,24 @@ terraform {
 provider "kind" {}
 
 provider "kubectl" {
-  host                   = kind_cluster.gitops-cluster.endpoint
-  cluster_ca_certificate = kind_cluster.gitops-cluster.cluster_ca_certificate
-  client_certificate     = kind_cluster.gitops-cluster.client_certificate
-  client_key             = kind_cluster.gitops-cluster.client_key
+  host                   = kind_cluster.this.endpoint
+  cluster_ca_certificate = kind_cluster.this.cluster_ca_certificate
+  client_certificate     = kind_cluster.this.client_certificate
+  client_key             = kind_cluster.this.client_key
   load_config_file       = false
 }
 
 provider "helm" {
   kubernetes {
-    host                   = kind_cluster.gitops-cluster.endpoint
-    cluster_ca_certificate = kind_cluster.gitops-cluster.cluster_ca_certificate
-    client_certificate     = kind_cluster.gitops-cluster.client_certificate
-    client_key             = kind_cluster.gitops-cluster.client_key
+    host                   = kind_cluster.this.endpoint
+    cluster_ca_certificate = kind_cluster.this.cluster_ca_certificate
+    client_certificate     = kind_cluster.this.client_certificate
+    client_key             = kind_cluster.this.client_key
   }
 }
 
-resource "kind_cluster" "gitops-cluster" {
-  name = "gitops-cluster"
+resource "kind_cluster" "this" {
+  name = "this"
   
   kind_config {
     kind = "Cluster"
@@ -77,7 +77,7 @@ resource "helm_release" "ingress_nginx" {
     value = "true"
   }
   
-  depends_on = [kind_cluster.gitops-cluster]
+  depends_on = [kind_cluster.this]
 }
 
 # Install Prometheus
@@ -93,7 +93,7 @@ resource "helm_release" "prometheus" {
     value = "false"
   }
   
-  depends_on = [kind_cluster.gitops-cluster]
+  depends_on = [kind_cluster.this]
 }
 
 # Install Grafana
@@ -150,12 +150,12 @@ resource "helm_release" "argocd" {
     value = "true"
   }
   
-  depends_on = [kind_cluster.gitops-cluster]
+  depends_on = [kind_cluster.this]
 }
 
 # Output info
 output "cluster_endpoint" {
-  value = kind_cluster.gitops-cluster.endpoint
+  value = kind_cluster.this.endpoint
 }
 
 output "grafana_password" {
